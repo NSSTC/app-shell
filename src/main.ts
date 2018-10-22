@@ -29,20 +29,16 @@ export class AppShell implements API.IAppShell {
         return Ok(undefined);
     }
 
-    parseLine(line: string): Result<void, API.ECommandHandlerError> {
+    async parseLine(line: string): Promise<void> {
         const tokens = line.split(' ');
         const command = tokens.shift() || '';
 
         if (!this.cmdHandlers.has(command)) {
-            return Err(API.ECommandHandlerError.UnknownCommand);
+            throw new Error(API.ECommandHandlerError.UnknownCommand);
         }
 
         // @ts-ignore we already checked if the handler exists
-        const result = this.cmdHandlers.get(command).handler.call(this, tokens);
-
-        // todo: handle result!
-
-        return Ok(undefined);
+        await this.cmdHandlers.get(command).handler.call(this, tokens);
     }
 
     startShell(inStream: Readable, outStream: Writable): Result<void, API.ECommandHandlerError> {
@@ -68,11 +64,19 @@ export class AppShell implements API.IAppShell {
         this.readLine.unwrap().on('line', input => {
             const result = this.parseLine(input.toString());
 
-            if (result.is_err()) {
+            result.catch(err => {
                 // todo: emit error or log to console
-                this.console.unwrap().error(result.err());
+                if (this.console.is_some()){
+                    this.console.unwrap().error(err);
+                }
+            });
+
+            if (this.readLine.is_some()) {
+                this.readLine.unwrap().prompt();
             }
         });
+
+        this.readLine.unwrap().prompt();
 
         return Ok(undefined);
     }

@@ -16,7 +16,7 @@ export interface ICommandHandler {
 
 export interface IAppShell {
     clearOutput(): void;
-    parseLine(line: string): Result<void, ECommandHandlerError>;
+    parseLine(line: string): Promise<void>;
     register(handler: ICommandHandler): Result<void, ECommandHandlerError>;
     startShell(inStream: Readable, outStream: Writable): Result<void, ECommandHandlerError>;
     stopShell(): void;

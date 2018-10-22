@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 
-const AppShell = require('../dist/app-shell.js').AppShell;
+const AppShell = require('..').AppShell;
 const shell = new AppShell();
 
 shell.register({
