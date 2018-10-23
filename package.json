@@ -3,6 +3,10 @@
   "license": "MPL-2.0",
   "version": "0.1.0",
   "repository": "https://gitlab.com/NSSTC/app-shell",
+  "engineStrict" : true,
+  "engines": {
+    "node": ">=8.3.0"
+  },
   "dependencies": {
     "@usefultools/monads": "^1.1.2"
   },
